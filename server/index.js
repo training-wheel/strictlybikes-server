@@ -11,7 +11,8 @@ const server = restify.createServer({
 
 const transformGoogleProfile = (profile) => ({
   name: profile.displayName,
-  avatar: profile.image.url,
+  imageUrl: profile.photos[0].value,
+  email: profile.emails[0],
 });
 
 passport.use(new GoogleStrategy({
@@ -19,7 +20,11 @@ passport.use(new GoogleStrategy({
   clientSecret: process.env.WEB_CLIENT_SECRET,
   callbackURL: process.env.WEB_CALLBACK_URL,
 }, async (accessToken, refreshToken, profile, done) => {
-  done(null, transformGoogleProfile);
+  try {
+    done(null, transformGoogleProfile(profile));
+  } catch (err) {
+    console.error(err);
+  }
 }));
 
 passport.serializeUser((user, done) => done(null, user));
@@ -31,12 +36,14 @@ server.use(restify.plugins.bodyParser());
 server.use(passport.initialize());
 server.use(passport.session());
 
-server.get('/auth/google', passport.authenticate('google', { scope: ['profile'] }));
+server.get('/auth/google', passport.authenticate('google', {
+  scope: ['https://www.googleapis.com/auth/plus.login', 'profile', 'email'], accessType: 'offline'
+}));
 
 server.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/auth/google' }),
-  (req, res) => {
-    res.redirect(`OAuthLogin://login?user=${JSON.stringify(req.user)}`)
+  (req, res, next) => {
+    res.redirect(`OAuthLogin://login?user=${JSON.stringify(req.user)}`, next)
   });
 
 server.get('/', (req, res) => {
