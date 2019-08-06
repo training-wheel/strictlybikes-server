@@ -1,10 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('../index');
 const SavedTrips = {
-  userId: {
-    type: Sequelize.INTEGER,
-    allowNull : false
-  },
   startLongitude: {
     type: Sequelize.INTEGER,
     allowNull : false

@@ -3,19 +3,20 @@ const db = require('../index');
 const Users = {
   name: {
     type: Sequelize.STRING,
-    allowNull : false
+    allowNull: false
   },
   email: {
     type: Sequelize.STRING,
-    allowNull : false
+    allowNull: false
   },
   imageUrl: {
     type: Sequelize.STRING,
-    allowNull : true
+    allowNull: true
   },
   totalDistance: {
     type: Sequelize.INTEGER,
-    allowNull : true
+    allowNull: true,
+    defaultValue: 0
   }
 };
 
