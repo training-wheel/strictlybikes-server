@@ -14,7 +14,7 @@ const server = restify.createServer({
 const transformGoogleProfile = (profile) => ({
   name: profile.displayName,
   imageUrl: profile.photos[0].value,
-  email: profile.emails[0],
+  email: profile.emails[0].value,
 });
 
 passport.use(new GoogleStrategy({
@@ -23,7 +23,9 @@ passport.use(new GoogleStrategy({
   callbackURL: process.env.WEB_CALLBACK_URL,
 }, async (accessToken, refreshToken, profile, done) => {
   try {
-    done(null, transformGoogleProfile(profile));
+    const sanitizedProfile = transformGoogleProfile(profile);
+    users.findCreateFind({ where: sanitizedProfile })
+    done(null, sanitizedProfile);
   } catch (err) {
     console.error(err);
   }
