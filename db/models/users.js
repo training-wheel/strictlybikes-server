@@ -9,10 +9,14 @@ const Users = {
     type: Sequelize.STRING,
     allowNull : false
   },
+  imageUrl: {
+    type: Sequelize.STRING,
+    allowNull : true
+  },
   totalDistance: {
     type: Sequelize.INTEGER,
     allowNull : true
-  },
+  }
 };
 
 module.exports = Users;

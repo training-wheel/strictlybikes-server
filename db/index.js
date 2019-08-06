@@ -1,7 +1,7 @@
 const Sequelize = require('sequelize');
 const definitions = require('../db/models/index');
-const connection = new Sequelize('strictlybikes', 'makmillie', 'password', {
-  host: 'localhost',
+const connection = new Sequelize(process.env.DB_NAME, 'makmillie', process.env.DB_USER_PASSWORD, {
+  host: process.env.DB_HOST,
   dialect: 'postgres',
 });
 connection
@@ -13,12 +13,19 @@ connection
     console.error('Unable to connect to the database:', err);
   });
   const models = {};
-  //drop tables before creating again
-  connection.drop();
   for(const name in definitions) {
     models[name] = connection.define(name, definitions[name]);
     connection.sync();
-  }
+  } 
+const {users, badges, markers, userbadges, markerlocations, savedtrips, metrics, usersmetrics, conditions} = models;
+badges.belongsTo(metrics)
+users.hasMany(userbadges);
+badges.hasMany(userbadges);
+savedtrips.belongsTo(conditions);
+users.belongsTo(savedtrips);
+users.hasMany(usersmetrics);
+metrics.hasMany(usersmetrics);
+markers.belongsTo(markerlocations);
 
 module.exports.connection = connection;
 module.exports.models = models;
