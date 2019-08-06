@@ -2,6 +2,7 @@ require('dotenv').config();
 const restify = require('restify');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20');
+const db = require('../db/index');
 
 const server = restify.createServer({
   name: 'Strictly Bikes',
