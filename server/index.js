@@ -2,7 +2,9 @@ require('dotenv').config();
 const restify = require('restify');
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20');
-const db = require('../db/index');
+const {
+  badges, conditions, markerlocations, markers, metrics, savedtrips, userbadges, users, usersmetrics,
+} = require('../db/index').models;
 
 const server = restify.createServer({
   name: 'Strictly Bikes',
@@ -11,7 +13,8 @@ const server = restify.createServer({
 
 const transformGoogleProfile = (profile) => ({
   name: profile.displayName,
-  avatar: profile.image.url,
+  imageUrl: profile.photos[0].value,
+  email: profile.emails[0].value,
 });
 
 passport.use(new GoogleStrategy({
@@ -19,7 +22,13 @@ passport.use(new GoogleStrategy({
   clientSecret: process.env.WEB_CLIENT_SECRET,
   callbackURL: process.env.WEB_CALLBACK_URL,
 }, async (accessToken, refreshToken, profile, done) => {
-  done(null, transformGoogleProfile);
+  try {
+    const sanitizedProfile = transformGoogleProfile(profile);
+    users.findCreateFind({ where: sanitizedProfile })
+    done(null, sanitizedProfile);
+  } catch (err) {
+    console.error(err);
+  }
 }));
 
 passport.serializeUser((user, done) => done(null, user));
@@ -31,12 +40,14 @@ server.use(restify.plugins.bodyParser());
 server.use(passport.initialize());
 server.use(passport.session());
 
-server.get('/auth/google', passport.authenticate('google', { scope: ['profile'] }));
+server.get('/auth/google', passport.authenticate('google', {
+  scope: ['https://www.googleapis.com/auth/plus.login', 'profile', 'email'], accessType: 'offline'
+}));
 
 server.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/auth/google' }),
-  (req, res) => {
-    res.redirect(`OAuthLogin://login?user=${JSON.stringify(req.user)}`)
+  (req, res, next) => {
+    res.redirect(`OAuthLogin://login?user=${JSON.stringify(req.user)}`, next)
   });
 
 server.get('/', (req, res) => {
