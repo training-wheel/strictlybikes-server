@@ -14,8 +14,8 @@ router.post('/login', async (req, res) => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    const { name, email, picture: imageUrl } = profile.data;
-    const sanitizedProfile = { name, email, imageUrl };
+    const { name, picture: imageUrl } = profile.data;
+    const sanitizedProfile = { name, imageUrl };
     const [user] = await users.findCreateFind({ where: sanitizedProfile });
     const { id } = user;
     const token = await jwt.sign({ id }, process.env.JWT_SECRET);
