@@ -1,59 +1,66 @@
 require('dotenv').config();
 const restify = require('restify');
-const passport = require('passport');
-const GoogleStrategy = require('passport-google-oauth20');
+const axios = require('axios');
+const jwt = require('jsonwebtoken');
 const {
-  badges, conditions, markerlocations, markers, metrics, savedtrips, userbadges, users, usersmetrics,
+  badges,
+  conditions,
+  markerlocations,
+  markers,
+  metrics,
+  savedtrips,
+  userbadges,
+  users,
+  usersmetrics,
 } = require('../db/index').models;
+const { JWT_SECRET, PORT } = process.env;
 
 const server = restify.createServer({
   name: 'Strictly Bikes',
-  version: '1.0.0'
+  version: '1.0.0',
 });
-
-const transformGoogleProfile = (profile) => ({
-  name: profile.displayName,
-  imageUrl: profile.photos[0].value,
-  email: profile.emails[0].value,
-});
-
-passport.use(new GoogleStrategy({
-  clientID: process.env.WEB_CLIENT_ID,
-  clientSecret: process.env.WEB_CLIENT_SECRET,
-  callbackURL: process.env.WEB_CALLBACK_URL,
-}, async (accessToken, refreshToken, profile, done) => {
-  try {
-    const sanitizedProfile = transformGoogleProfile(profile);
-    users.findCreateFind({ where: sanitizedProfile })
-    done(null, sanitizedProfile);
-  } catch (err) {
-    console.error(err);
-  }
-}));
-
-passport.serializeUser((user, done) => done(null, user));
-passport.deserializeUser((user, done) => done(null, user));
 
 server.use(restify.plugins.acceptParser(server.acceptable));
 server.use(restify.plugins.queryParser());
 server.use(restify.plugins.bodyParser());
-server.use(passport.initialize());
-server.use(passport.session());
-
-server.get('/auth/google', passport.authenticate('google', {
-  scope: ['https://www.googleapis.com/auth/plus.login', 'profile', 'email'], accessType: 'offline'
-}));
-
-server.get('/auth/google/callback',
-  passport.authenticate('google', { failureRedirect: '/auth/google' }),
-  (req, res, next) => {
-    res.redirect(`OAuthLogin://login?user=${JSON.stringify(req.user)}`, next)
-  });
 
 server.get('/', (req, res) => {
   res.send('~Strictly Bikes~');
 });
 
-server.listen(3000, function() {
+server.post('/login', async (req, res) => {
+  try {
+    const accessToken = req.header('authorization');
+    const profile = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+      },
+    });
+    const { id: googleId, name, email, picture: imageUrl } = profile.data;
+    const sanitizedProfile = { googleId, name, email, imageUrl };
+    const [user] = await users.findCreateFind({ where: sanitizedProfile });
+    const { id } = user;
+    const token = await jwt.sign({ id }, JWT_SECRET);
+    res.send(201, token);
+  } catch (err) {
+    console.error(err);
+    res.send(500);
+  }
+});
+
+const validateUser = async (req, res, next) => {
+  try {
+    const token = req.header('authorization');
+    const { id } = jwt.sign(token, JWT_SECRET);
+    req.user = id;
+    next();
+  } catch (err) {
+    res.send(400, 'User not signed in');
+  }
+};
+
+const port = PORT || 3000;
+
+server.listen(port, () => {
   console.log('%s listening at %s', server.name, server.url);
 });
