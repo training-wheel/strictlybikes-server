@@ -1,34 +1,34 @@
 const Sequelize = require('sequelize');
-const db = require('../index');
+
 const Games = {
   lat: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   long: {
     type: Sequelize.STRING,
-    allowNull: false
+    allowNull: false,
   },
   startTime: {
     type: Sequelize.INTEGER,
-    allowNull: false
+    allowNull: false,
   },
   markerLimit: {
     type: Sequelize.INTEGER,
-    allowNull: false
+    allowNull: false,
   },
   timeLimit: {
     type: Sequelize.INTEGER,
-    allowNull: false
+    allowNull: false,
   },
   code: {
     type: Sequelize.STRING,
-    allowNull: true
+    allowNull: true,
   },
   state: {
     type: Sequelize.ENUM('init', 'playing', 'end'),
     allowNull: false,
-    defaultValue: 'init'
+    defaultValue: 'init',
   },
 };
 

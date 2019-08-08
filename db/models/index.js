@@ -8,8 +8,6 @@ const Users = require('./users');
 const UserMetrics = require('./userMetrics');
 const Metrics = require('./metrics');
 
-
-
 module.exports.badges = Badges;
 module.exports.games = Games;
 module.exports.markers = Markers;
@@ -19,4 +17,3 @@ module.exports.usermarkers = UserMarkers;
 module.exports.users = Users;
 module.exports.usermetrics = UserMetrics;
 module.exports.metrics = Metrics;
-
