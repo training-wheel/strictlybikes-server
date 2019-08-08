@@ -21,8 +21,24 @@ server.get('/', validateUser, (req, res) => {
 });
 
 const io = socketio.listen(server.server);
+const { LobbySocket } = require('./io/lobby');
+
 io.sockets.on('connection', (socket) => {
-  socket.emit('news', { hello: 'world' });
+  const eventHandlers = {
+    example: new LobbySocket(socket, server.server),
+  };
+  for (let category in eventHandlers) {
+    const { handlers } = eventHandlers[category];
+    for (let event in handlers) {
+      socket.on(event, handlers[event]);
+    }
+  }
+  socket.on('error', (err) => {
+    console.error(`Socket error: ${err}`);
+  });
+  socket.on('disconnect', () => {
+    console.log('Socket disconnected');
+  })
 });
 
 const port = process.env.PORT || 3000;
