@@ -1,10 +1,6 @@
 const Sequelize = require('sequelize');
 const db = require('../index');
 const Users = {
-  googleId: {
-    type: Sequelize.STRING,
-    allowNull: false,
-  },
   name: {
     type: Sequelize.STRING,
     allowNull: false,

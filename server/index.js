@@ -24,9 +24,16 @@ server.use(restify.plugins.acceptParser(server.acceptable));
 server.use(restify.plugins.queryParser());
 server.use(restify.plugins.bodyParser());
 
-server.get('/', (req, res) => {
-  res.send('~Strictly Bikes~');
-});
+const validateUser = async (req, res, next) => {
+  try {
+    const token = req.header('jwt');
+    const { id } = jwt.verify(token, JWT_SECRET);
+    req.user = id;
+    next();
+  } catch (err) {
+    res.send(400, `User not signed in: ${err.message}`);
+  }
+};
 
 server.post('/login', async (req, res) => {
   try {
@@ -36,8 +43,8 @@ server.post('/login', async (req, res) => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    const { id: googleId, name, email, picture: imageUrl } = profile.data;
-    const sanitizedProfile = { googleId, name, email, imageUrl };
+    const { name, email, picture: imageUrl } = profile.data;
+    const sanitizedProfile = { name, email, imageUrl };
     const [user] = await users.findCreateFind({ where: sanitizedProfile });
     const { id } = user;
     const token = await jwt.sign({ id }, JWT_SECRET);
@@ -48,16 +55,11 @@ server.post('/login', async (req, res) => {
   }
 });
 
-const validateUser = async (req, res, next) => {
-  try {
-    const token = req.header('authorization');
-    const { id } = jwt.sign(token, JWT_SECRET);
-    req.user = id;
-    next();
-  } catch (err) {
-    res.send(400, 'User not signed in');
-  }
-};
+server.use(validateUser);
+
+server.get('/', (req, res) => {
+  res.send('~Strictly Bikes~');
+});
 
 const port = PORT || 3000;
 
