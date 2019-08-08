@@ -1,21 +1,19 @@
-const Users = require('./users');
 const Badges = require('./badges');
+const Games = require('./games');
 const Markers = require('./markers');
 const UserBadges = require('./userBadges');
-const MarkerLocations = require('./markerLocations');
-const SavedTrips = require('./savedTrips');
-const Conditions = require('./conditions');
+const UserGames = require('./userGames');
+const UserMarkers = require('./userMarkers');
+const Users = require('./users');
+const UserMetrics = require('./userMetrics');
 const Metrics = require('./metrics');
-const UsersMetrics = require('./usersMetrics');
 
-
-module.exports.users = Users;
 module.exports.badges = Badges;
-module.exports.userbadges = UserBadges;
+module.exports.games = Games;
 module.exports.markers = Markers;
-module.exports.markerlocations = MarkerLocations;
-module.exports.savedtrips = SavedTrips;
-module.exports.conditions = Conditions;
+module.exports.userbadges = UserBadges;
+module.exports.usergames = UserGames;
+module.exports.usermarkers = UserMarkers;
+module.exports.users = Users;
+module.exports.usermetrics = UserMetrics;
 module.exports.metrics = Metrics;
-module.exports.usersmetrics = UsersMetrics;
-

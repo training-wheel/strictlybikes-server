@@ -1,9 +1,13 @@
 const Sequelize = require('sequelize');
-const db = require('../index');
+
 const Markers = {
-  name: {
+  lat: {
     type: Sequelize.STRING,
-    allowNull : false
+    allowNull: false,
+  },
+  long: {
+    type: Sequelize.STRING,
+    allowNull: false,
   },
 };
 
