@@ -3,12 +3,17 @@ const db = require('../index');
 const Badges = {
   name: {
     type: Sequelize.STRING,
-    allowNull : false
+    allowNull: false
   },
-  image: {
+  goal: {
+    type: Sequelize.INTEGER,
+    allowNull: false
+  },
+  description: {
     type: Sequelize.STRING,
-    allowNull : false
-  },
+    allowNull: false
+  }
+  
 };
 
 module.exports = Badges;

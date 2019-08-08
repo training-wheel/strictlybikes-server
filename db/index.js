@@ -17,15 +17,32 @@ connection
     models[name] = connection.define(name, definitions[name]);
     connection.sync();
   } 
-const {users, badges, markers, userbadges, markerlocations, savedtrips, metrics, usersmetrics, conditions} = models;
-badges.belongsTo(metrics)
+const {users, games, markers, usermarkers, usergames, badges, userbadges, metrics, usermetrics} = models;
+
+users.hasMany(usergames);
+games.hasMany(usergames);
+
+games.belongsTo(users);
+
+markers.belongsTo(games);
+
+users.hasMany(usermarkers);
+markers.hasMany(usermarkers);
+
+users.hasMany(usermetrics);
+metrics.hasMany(usermetrics);
+
+badges.belongsTo(metrics);
+
+
 users.hasMany(userbadges);
-badges.hasMany(userbadges);
-savedtrips.belongsTo(conditions);
-users.belongsTo(savedtrips);
-users.hasMany(usersmetrics);
-metrics.hasMany(usersmetrics);
-markers.belongsTo(markerlocations);
+badges.hasMany(userbadges)
+
+
+
+
+
+
 
 module.exports.connection = connection;
 module.exports.models = models;
