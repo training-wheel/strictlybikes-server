@@ -22,23 +22,15 @@ for (const name in definitions) {
 const {
   users, games, markers, usermarkers, usergames, badges, userbadges, metrics, usermetrics,
 } = models;
-
 users.hasMany(usergames);
 games.hasMany(usergames);
-
 games.belongsTo(users);
-
 markers.belongsTo(games);
-
 users.hasMany(usermarkers);
 markers.hasMany(usermarkers);
-
 users.hasMany(usermetrics);
 metrics.hasMany(usermetrics);
-
 badges.belongsTo(metrics);
-
-
 users.hasMany(userbadges);
 badges.hasMany(userbadges);
 
