@@ -12,7 +12,7 @@ class ActiveSocket {
     this.server = server;
     this.socket = socket;
     this.handlers = {
-      createGame: createGame.bind(this);
+      createGame: createGame.bind(this),
     };
   }
 };
