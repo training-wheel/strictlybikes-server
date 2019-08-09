@@ -43,7 +43,8 @@ io.sockets.on('connect', (socket) => {
   });
   socket.on('disconnect', () => {
     console.log('Socket disconnected');
-  })
+    socket.removeAllListeners();
+  });
 });
 
 const port = process.env.PORT || 3000;
