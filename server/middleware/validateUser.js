@@ -7,6 +7,7 @@ const validateUser = async (req, res, next) => {
     req.user = id;
     next();
   } catch (err) {
+    console.error(`User not logged in: ${err}`);
     res.send(400, `User not signed in: ${err.message}`);
   }
 };
