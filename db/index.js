@@ -2,7 +2,9 @@
 const Sequelize = require('sequelize');
 const definitions = require('../db/models/index');
 
-const connection = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_USER_PASSWORD, {
+const { DB_NAME, DB_USER, DB_USER_PASSWORD } = process.env;
+
+const connection = new Sequelize(DB_NAME, DB_USER, DB_USER_PASSWORD, {
   host: process.env.DB_HOST,
   dialect: 'postgres',
   logging: false,
