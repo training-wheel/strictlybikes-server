@@ -1,8 +1,7 @@
 const { Router } = require('restify-router');
-const axios = require('axios');
-const { games, userGames } = require('../../db/index').models; 
+const { games } = require('../../db/index').models;
 
-const router = new Router;
+const router = new Router();
 
 const createGame = (req, res) => {
   // const userId = req.user;

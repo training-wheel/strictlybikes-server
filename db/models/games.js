@@ -21,6 +21,14 @@ const Games = {
     type: Sequelize.INTEGER,
     allowNull: false,
   },
+  playerLimit: {
+    type: Sequelize.INTEGER,
+    defaultValue: 2,
+  },
+  playerCount: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0,
+  },
   code: {
     type: Sequelize.STRING,
     allowNull: true,
