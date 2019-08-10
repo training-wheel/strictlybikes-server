@@ -28,6 +28,7 @@ const { LobbySocket } = require('./io/lobby');
 const { ActiveSocket } = require('./io/active');
 
 io.sockets.on('connect', (socket) => {
+  console.log('connected');
   const eventHandlers = {
     lobby: new LobbySocket(socket, server.server),
     active: new ActiveSocket(socket, server.server),
