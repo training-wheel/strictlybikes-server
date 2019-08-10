@@ -4,8 +4,7 @@ const { games } = require('../../db/index').models;
 const router = new Router();
 
 const createGame = (req, res) => {
-  // const userId = req.user;
-  const userId = 1;
+  const userId = req.user;
   const options = req.body;
   options.userId = userId;
   games.create(options)
