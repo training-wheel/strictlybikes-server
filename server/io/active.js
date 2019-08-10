@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const { games, userGames } = require('../../db/index').models;
 
 const createGame = (data) => {
