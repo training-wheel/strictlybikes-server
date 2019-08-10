@@ -1,10 +1,10 @@
-const { games, userGames } = require('../../db/index').models; 
+const { games, userGames } = require('../../db/index').models;
 
 const createGame = (data) => {
   //  create new game
   const gameOptions = {
 
-  }
+  };
 };
 
 class ActiveSocket {
@@ -15,6 +15,6 @@ class ActiveSocket {
       createGame: createGame.bind(this),
     };
   }
-};
+}
 
 module.exports.ActiveSocket = ActiveSocket;
