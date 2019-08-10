@@ -1,3 +1,4 @@
+const jwt = require('jsonwebtoken');
 const { usergames, games } = require('../../db/index').models;
 
 class LobbySocket {
@@ -21,23 +22,29 @@ class LobbySocket {
       },
       joinGame: async (data) => {
         try {
-          const { room, userId } = data;
+          const { room, jwt: token } = data;
+          const { id: userId } = jwt.verify(token, process.env.JWT_SECRET);
           const game = await games.findOne({
             where: {
               code: room,
             },
           });
-          const { id: gameId, userId: host } = game;
+          game.increment('playerCount');
+          const { id: gameId, userId: host, playerCount, playerLimit } = game;
           await usergames.create({ userId, gameId });
           socket.leave('lobby');
           socket.join(room);
           socket.emit('join', `Congratulations you joined ${room}`);
-          const pendingGames = await games.findAll({
-            where: {
-              state: 'init',
-            },
-          });
+          if (playerCount === playerLimit) {
+            game.update({ state: 'playing' });
+            socket.to(room).broadcast.emit('playing', 'Get ready to bike!');
+          }
           if (userId === host) {
+            const pendingGames = await games.findAll({
+              where: {
+                state: 'init',
+              },
+            });
             socket.to('lobby').broadcast.emit('newGame', JSON.stringify(pendingGames));
           }
         } catch (err) {
