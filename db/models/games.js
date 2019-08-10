@@ -33,6 +33,10 @@ const Games = {
     type: Sequelize.STRING,
     allowNull: true,
   },
+  radius: {
+    type: Sequelize.INTEGER,
+    allowNull: false,
+  },
   state: {
     type: Sequelize.ENUM('init', 'playing', 'end'),
     allowNull: false,
