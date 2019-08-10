@@ -29,24 +29,22 @@ class LobbySocket {
               code: room,
             },
           });
-          game.increment('playerCount');
+          await game.increment('playerCount');
           const { id: gameId, userId: host, playerCount, playerLimit } = game;
           await usergames.create({ userId, gameId });
           socket.leave('lobby');
           socket.join(room);
           socket.emit('join', `Congratulations you joined ${room}`);
-          if (playerCount === playerLimit) {
-            game.update({ state: 'playing' });
+          if (playerCount >= playerLimit) {
+            await game.update({ state: 'playing' });
             socket.to(room).broadcast.emit('playing', 'Get ready to bike!');
           }
-          if (userId === host) {
-            const pendingGames = await games.findAll({
-              where: {
-                state: 'init',
-              },
-            });
-            socket.to('lobby').broadcast.emit('newGame', JSON.stringify(pendingGames));
-          }
+          const pendingGames = await games.findAll({
+            where: {
+              state: 'init',
+            },
+          });
+          socket.to('lobby').broadcast.emit('newGame', JSON.stringify(pendingGames));
         } catch (err) {
           console.error(`Failed to join room: ${err}`);
         }
