@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
-const { usergames, games } = require('../../db/index').models;
+const { usergames, games, markers } = require('../../db/index').models;
+const { generateMarkers } = require('../utils');
 
 class LobbySocket {
   constructor(socket, server) {
@@ -27,17 +28,29 @@ class LobbySocket {
           const game = await games.findOne({
             where: {
               code: room,
+              state: 'init',
             },
           });
           await game.increment('playerCount');
-          const { id: gameId, userId: host, playerCount, playerLimit } = game;
+          const {
+            id: gameId, playerCount, playerLimit, lat, long, markerLimit, radius,
+          } = game;
           await usergames.create({ userId, gameId });
           socket.leave('lobby');
           socket.join(room);
           socket.emit('join', `Congratulations you joined ${room}`);
           if (playerCount >= playerLimit) {
             await game.update({ state: 'playing' });
-            socket.to(room).broadcast.emit('playing', 'Get ready to bike!');
+            const markerCoords = generateMarkers(lat, long, radius, markerLimit);
+            const createMarkersArray = markerCoords.map((marker) => {
+              const [markerLat, markerLong] = marker;
+              return { lat: markerLat, long: markerLong, gameId };
+            });
+            const markerResults = await markers.bulkCreate(createMarkersArray);
+            setTimeout(() => {
+              socket.emit('playing', markerResults);
+              socket.to(room).emit('playing', markerResults);
+            }, 3000);
           }
           const pendingGames = await games.findAll({
             where: {
