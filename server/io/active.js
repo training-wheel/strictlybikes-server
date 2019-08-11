@@ -1,11 +1,34 @@
 const jwt = require('jsonwebtoken');
-const { games, userGames } = require('../../db/index').models;
+const {
+  games, usergames, usermarkers, markers,
+} = require('../../db/index').models;
 
-const createGame = (data) => {
+const markerHit = async (data) => {
   //  create new game
-  const gameOptions = {
-
-  };
+  try {
+    const { id: markerId, jwt: token } = data;
+    const userId = jwt.verify(token, process.env.JWT_SECRET);
+    const { gameId, code } = await markers.findOne({ where: { markerId } });
+    await usermarkers.create({ userId, markerId, gameId });
+    const userGame = await usergames.findOne({
+      where: {
+        userId,
+        gameId,
+      },
+    });
+    await userGame.increment('markerCount');
+    const { markerCount } = userGame;
+    const { markerLimit } = await games.findByPk(gameId);
+    const { name } = await usergames.findByPk(userId);
+    if (markerCount === markerLimit) {
+      this.socket.emit('end', name);
+      this.socket.to(code).broadcast('end', name);
+    } else {
+      this.socket.to(code).broadcast('hit', name);
+    }
+  } catch (err) {
+    console.error(`Marker hit error: ${err}`);
+  }
 };
 
 class ActiveSocket {
@@ -13,7 +36,7 @@ class ActiveSocket {
     this.server = server;
     this.socket = socket;
     this.handlers = {
-      createGame: createGame.bind(this),
+      createGame: markerHit.bind(this),
     };
   }
 }
