@@ -32,7 +32,9 @@ class LobbySocket {
             },
           });
           await game.increment('playerCount');
-          const { id: gameId, playerCount, playerLimit, lat, long, markerLimit, radius } = game;
+          const {
+            id: gameId, playerCount, playerLimit, lat, long, markerLimit, radius,
+          } = game;
           await usergames.create({ userId, gameId });
           socket.leave('lobby');
           socket.join(room);
@@ -45,8 +47,10 @@ class LobbySocket {
               return { lat: markerLat, long: markerLong, gameId };
             });
             const markerResults = await markers.bulkCreate(createMarkersArray);
-            socket.emit('playing', markerResults);
-            socket.to(room).emit('playing', markerResults);
+            setTimeout(() => {
+              socket.emit('playing', markerResults);
+              socket.to(room).emit('playing', markerResults);
+            }, 3000);
           }
           const pendingGames = await games.findAll({
             where: {
