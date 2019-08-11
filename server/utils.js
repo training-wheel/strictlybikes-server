@@ -24,4 +24,4 @@ const generateMarkers = (lat, long, radius, count) => {
 
 module.exports = {
   generateMarkers,
-}
+};
