@@ -39,6 +39,7 @@ games.belongsTo(users);
 markers.belongsTo(games);
 users.hasMany(usermarkers);
 markers.hasMany(usermarkers);
+games.hasMany(usermarkers);
 users.hasMany(usermetrics);
 metrics.hasMany(usermetrics);
 badges.belongsTo(metrics);
