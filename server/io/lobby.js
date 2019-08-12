@@ -16,7 +16,6 @@ class LobbySocket {
             },
           });
           socket.emit('newGame', JSON.stringify(pendingGames));
-          console.log('lobby joined');
         } catch (err) {
           console.error(`Failed to join lobby: ${err}`);
         }
@@ -46,7 +45,7 @@ class LobbySocket {
               const [markerLat, markerLong] = marker;
               return { lat: markerLat, long: markerLong, gameId };
             });
-            const markerResults = await markers.bulkCreate(createMarkersArray);
+            const markerResults = await markers.bulkCreate(createMarkersArray, { returning: true });
             setTimeout(() => {
               socket.emit('playing', markerResults);
               socket.to(room).emit('playing', markerResults);
