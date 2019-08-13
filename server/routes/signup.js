@@ -13,7 +13,7 @@ router.post('/signup', async (req, res) => {
         Authorization: `Bearer ${accessToken}`,
       },
     });
-    const { name, picture: imageUrl, googleId } = profile.data;
+    const { name, picture: imageUrl, id: googleId } = profile.data;
     const sanitizedProfile = {
       name, imageUrl, username, googleId,
     };
