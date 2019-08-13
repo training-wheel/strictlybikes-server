@@ -27,27 +27,16 @@ class ActiveSocket {
             where: {
               id: gameId,
             },
-            // include: [
-            //   {
-            //     model: markers,
-            //     include: [
-            //       {
-            //         model: usermarkers,
-            //         include: [
-            //           {
-            //             model: users,
-            //           },
-            //         ],
-            //       },
-            //     ],
-            //   },
-            // ],
           });
           const { markerLimit, code } = game;
           const { name } = await users.findByPk(userId);
           if (markerCount === markerLimit) {
             this.socket.emit('end', name);
             this.socket.to(code).emit('end', name);
+            await games.updateMetrics(game);
+            game.update({
+              state: 'end',
+            });
           } else {
             this.socket.to(code).emit('hit', name);
           }
