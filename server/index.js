@@ -8,6 +8,7 @@ const server = restify.createServer({
 });
 
 const loginRoute = require('./routes/login');
+const signupRoute = require('./routes/signup');
 const createGame = require('./routes/createGame');
 const validateUser = require('./middleware/validateUser');
 
@@ -16,6 +17,7 @@ server.use(restify.plugins.queryParser());
 server.use(restify.plugins.bodyParser());
 
 loginRoute.applyRoutes(server);
+signupRoute.applyRoutes(server);
 createGame.use(validateUser);
 createGame.applyRoutes(server);
 
