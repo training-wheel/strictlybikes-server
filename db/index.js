@@ -1,5 +1,6 @@
 /* eslint-disable no-console */
 const Sequelize = require('sequelize');
+const { Op } = Sequelize;
 const definitions = require('../db/models/index');
 const list = require('./badgeList');
 const userMet = require('./userMetrics');
@@ -48,13 +49,80 @@ badges.hasMany(userbadges);
 
 // Only need to run once to populate database with badges.
 
+userMet.forEach((metric) => {
+  metrics.findCreateFind({ where: metric });
+});
 list.forEach((badge) => {
   badges.findCreateFind({ where: badge });
 });
 
-userMet.forEach((metric) => {
-  metrics.findCreateFind({ where: metric });
-});
+
+games.updateMetrics = async (game) => {
+  try {
+    const allMetrics = await metrics.findAll({
+      where: {
+        name: {
+          [Op.or]: ['Wins', 'Games'],
+        },
+      },
+    });
+    const metricsId = allMetrics.reduce((acc, metric) => {
+      acc[metric.name] = metric.id;
+      return acc;
+    }, {});
+    const playerGames = await usergames.findAll({ where: { gameId: game.id } });
+    playerGames.forEach(async (player) => {
+      try {
+        const [playedGames] = await usermetrics.findCreateFind({
+          where: {
+            userId: player.userId,
+            metricId: metricsId.Games,
+          },
+        });
+        await playedGames.increment('value');
+        const gameBadge = await badges.findOne({
+          where: {
+            metricId: metricsId.Games,
+            goal: playedGames.value,
+          },
+        });
+        if (gameBadge) {
+          userbadges.create({
+            userId: player.userId,
+            badgeId: gameBadge.id,
+          });
+        }
+        if (player.markerCount === game.markerLimit) {
+          const wonGames = await usermetrics.findCreateFind({
+            where: {
+              userId: player.userId,
+              metricId: metricsId.Wins,
+            },
+          });
+          await wonGames.increment();
+          const wonBadge = await badges.findOne({
+            where: {
+              metricId: metricsId.Wins,
+              goal: wonGames.value,
+            },
+          });
+          if (wonBadge) {
+            userbadges.create({
+              where: {
+                userId: player.userId,
+                badgeId: wonBadge.id,
+              },
+            });
+          }
+        }
+      } catch (err) {
+        console.error(err);
+      }
+    });
+  } catch (err) {
+    console.error(err);
+  }
+};
 
 
 module.exports.connection = connection;

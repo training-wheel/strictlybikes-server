@@ -49,6 +49,16 @@ class LobbySocket {
             setTimeout(() => {
               socket.emit('playing', markerResults);
               socket.to(room).emit('playing', markerResults);
+              setTimeout(() => {
+                if (game.state !== 'end') {
+                  this.socket.emit('end');
+                  this.socket.to(room).emit('end');
+                  games.updateMetrics(game);
+                  game.update({
+                    state: 'end',
+                  });
+                }
+              }, 10000);
             }, 3000);
           }
           const pendingGames = await games.findAll({
