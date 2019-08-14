@@ -127,3 +127,4 @@ games.updateMetrics = async (game) => {
 
 module.exports.connection = connection;
 module.exports.models = models;
+module.exports.Sequelize = Sequelize;

@@ -10,6 +10,7 @@ const server = restify.createServer({
 const loginRoute = require('./routes/login');
 const signupRoute = require('./routes/signup');
 const createGame = require('./routes/createGame');
+const getProfile = require('./routes/profile');
 const validateUser = require('./middleware/validateUser');
 
 server.use(restify.plugins.acceptParser(server.acceptable));
@@ -19,7 +20,9 @@ server.use(restify.plugins.bodyParser());
 loginRoute.applyRoutes(server);
 signupRoute.applyRoutes(server);
 createGame.use(validateUser);
+getProfile.use(validateUser);
 createGame.applyRoutes(server);
+getProfile.applyRoutes(server);
 
 server.get('/', validateUser, (req, res) => {
   res.send('~Strictly Bikes~');
