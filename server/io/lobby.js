@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
-const { usergames, games, markers } = require('../../db/index').models;
+const { models, connection } = require('../../db/index');
 const { generateMarkers } = require('../utils');
+
+const { usergames, games, markers } = models;
 
 class LobbySocket {
   constructor(socket, server) {
@@ -65,6 +67,18 @@ class LobbySocket {
             where: {
               state: 'init',
             },
+          });
+          const pendingGameUsers = await pendingGames.map((pendingGame) => {
+            const { id: currentGameId } = pendingGame;
+            return connection
+              .query(`SELECT users.username FROM users, usergames
+                WHERE usergames."gameId" = ${currentGameId} AND users.id = usergames."userId"`);
+          });
+          const resolvedUsers = await Promise.all(pendingGameUsers);
+          resolvedUsers.forEach((gameUsers, index) => {
+            const [usernameObjects] = gameUsers;
+            const usernames = usernameObjects.map(object => object.username);
+            pendingGames[index].users = usernames;
           });
           socket.to('lobby').broadcast.emit('newGame', JSON.stringify(pendingGames));
         } catch (err) {
