@@ -17,6 +17,18 @@ class LobbySocket {
               state: 'init',
             },
           });
+          const pendingGameUsers = await pendingGames.map((pendingGame) => {
+            const { id: currentGameId } = pendingGame;
+            return connection
+              .query(`SELECT users.username FROM users, usergames
+                WHERE usergames."gameId" = ${currentGameId} AND users.id = usergames."userId"`);
+          });
+          const resolvedUsers = await Promise.all(pendingGameUsers);
+          resolvedUsers.forEach((gameUsers, index) => {
+            const [usernameObjects] = gameUsers;
+            const usernames = usernameObjects.map(object => object.username);
+            pendingGames[index].users = usernames;
+          });
           socket.emit('newGame', JSON.stringify(pendingGames));
         } catch (err) {
           console.error(`Failed to join lobby: ${err}`);
