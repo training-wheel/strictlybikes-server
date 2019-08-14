@@ -72,7 +72,7 @@ class LobbySocket {
                     state: 'end',
                   });
                 }
-              }, 10000);
+              }, game.timeLimit);
             }, 3000);
           }
           const pendingGames = await games.findAll({

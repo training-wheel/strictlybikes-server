@@ -38,6 +38,7 @@ class ActiveSocket {
               state: 'end',
             });
           } else {
+            this.socket.emit('hit', 'you');
             this.socket.to(code).emit('hit', name);
           }
         } catch (err) {

@@ -14,7 +14,7 @@ router.post('/login', async (req, res) => {
       },
     });
     const { id: googleId } = profile.data;
-    const user = await users.findOne({ googleId });
+    const user = await users.findOne({ where: { googleId } });
     if (user) {
       const { id } = user;
       const token = await jwt.sign({ id }, process.env.JWT_SECRET);
