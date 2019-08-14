@@ -9,12 +9,6 @@ const getProfile = async (req, res) => {
   try {
     const { user: userId } = req;
     const { username, imageUrl } = await users.findByPk(userId);
-    // const userBadgeIds = await userbadges.findAll({
-    //   where: {
-    //     userId,
-    //   },
-    //   attributes: ['badgeId'],
-    // });
     const [userBadgeIdObjects] = await connection
       .query('SELECT userbadges."badgeId" FROM userbadges WHERE userbadges."userId" = 1');
     const userBadgeIds = userBadgeIdObjects.map(userbadge => userbadge.badgeId);
