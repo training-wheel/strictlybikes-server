@@ -60,9 +60,9 @@ class LobbySocket {
               return { lat: markerLat, long: markerLong, gameId };
             });
             const markersArray = await markers.bulkCreate(createMarkersArray, { returning: true });
-            const [players] = await connection
+            const [playersArray] = await connection
               .query(`SELECT users.username FROM users, usergames WHERE usergames."gameId" = ${gameId} AND users.id = usergames."userId"`);
-            const players = players.reduce((counter, player) => {
+            const players = playersArray.reduce((counter, player) => {
               counter[player] = 0;
               return counter;
             }, {});
