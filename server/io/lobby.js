@@ -72,7 +72,7 @@ class LobbySocket {
             }, []);
             setTimeout(() => {
               socket.emit('playing', { markersArray, players });
-              socket.to(room).emit('playing', markersArray);
+              socket.to(room).emit('playing', { markersArray, players });
               setTimeout(() => {
                 if (game.state !== 'end') {
                   this.socket.emit('end');
