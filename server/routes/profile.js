@@ -43,7 +43,9 @@ const getProfile = async (req, res) => {
 
     const gameMarkers = await markers.findAll({
       where: {
-        [Op.or]: gameIds,
+        [Op.or]: {
+          gameId: gameIds,
+        },
       },
     });
 
@@ -58,7 +60,7 @@ const getProfile = async (req, res) => {
     };
     
     res.send(200, profile);
-    console.log(profile);
+    console.log(Array.from(profile.gameInfo));
   } catch (err) {
     console.error(`Failed to get profile: ${err}`);
     res.send(500, 'Failed to get profile');
