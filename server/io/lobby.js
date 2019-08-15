@@ -59,10 +59,16 @@ class LobbySocket {
               const [markerLat, markerLong] = marker;
               return { lat: markerLat, long: markerLong, gameId };
             });
-            const markerResults = await markers.bulkCreate(createMarkersArray, { returning: true });
+            const markersArray = await markers.bulkCreate(createMarkersArray, { returning: true });
+            const [playersArray] = await connection
+              .query(`SELECT users.username FROM users, usergames WHERE usergames."gameId" = ${gameId} AND users.id = usergames."userId"`);
+            const players = playersArray.reduce((counter, player) => {
+              counter[player] = 0;
+              return counter;
+            }, {});
             setTimeout(() => {
-              socket.emit('playing', markerResults);
-              socket.to(room).emit('playing', markerResults);
+              socket.emit('playing', { markersArray, players });
+              socket.to(room).emit('playing', markersArray);
               setTimeout(() => {
                 if (game.state !== 'end') {
                   this.socket.emit('end');
