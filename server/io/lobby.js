@@ -1,6 +1,8 @@
 const jwt = require('jsonwebtoken');
-const { usergames, games, markers } = require('../../db/index').models;
+const { models, connection } = require('../../db/index');
 const { generateMarkers } = require('../utils');
+
+const { usergames, games, markers } = models;
 
 class LobbySocket {
   constructor(socket, server) {
@@ -14,6 +16,18 @@ class LobbySocket {
             where: {
               state: 'init',
             },
+          });
+          const pendingGameUsers = await pendingGames.map((pendingGame) => {
+            const { id: currentGameId } = pendingGame;
+            return connection
+              .query(`SELECT users.username FROM users, usergames
+                WHERE usergames."gameId" = ${currentGameId} AND users.id = usergames."userId"`);
+          });
+          const resolvedUsers = await Promise.all(pendingGameUsers);
+          resolvedUsers.forEach((gameUsers, index) => {
+            const [usernameObjects] = gameUsers;
+            const usernames = usernameObjects.map(object => object.username);
+            pendingGames[index].users = usernames;
           });
           socket.emit('newGame', JSON.stringify(pendingGames));
         } catch (err) {
@@ -40,15 +54,25 @@ class LobbySocket {
           socket.emit('join', `Congratulations you joined ${room}`);
           if (playerCount >= playerLimit) {
             await game.update({ state: 'playing' });
-            const markerCoords = generateMarkers(lat, long, radius, markerLimit);
+            const markerCoords = await generateMarkers(lat, long, radius, markerLimit);
             const createMarkersArray = markerCoords.map((marker) => {
               const [markerLat, markerLong] = marker;
               return { lat: markerLat, long: markerLong, gameId };
             });
-            const markerResults = await markers.bulkCreate(createMarkersArray, { returning: true });
+            const markersArray = await markers.bulkCreate(createMarkersArray, { returning: true });
+            const [playersArray] = await connection
+              .query(`SELECT users.username FROM users, usergames WHERE usergames."gameId" = ${gameId} AND users.id = usergames."userId"`);
+            const players = playersArray.reduce((counter, player) => {
+              const formattedPlayer = {
+                username: player.username,
+                score: 0,
+              };
+              counter.push(formattedPlayer);
+              return counter;
+            }, []);
             setTimeout(() => {
-              socket.emit('playing', markerResults);
-              socket.to(room).emit('playing', markerResults);
+              socket.emit('playing', { markersArray, players });
+              socket.to(room).emit('playing', markersArray);
               setTimeout(() => {
                 if (game.state !== 'end') {
                   this.socket.emit('end');
@@ -58,13 +82,25 @@ class LobbySocket {
                     state: 'end',
                   });
                 }
-              }, 10000);
+              }, game.timeLimit);
             }, 3000);
           }
           const pendingGames = await games.findAll({
             where: {
               state: 'init',
             },
+          });
+          const pendingGameUsers = await pendingGames.map((pendingGame) => {
+            const { id: currentGameId } = pendingGame;
+            return connection
+              .query(`SELECT users.username FROM users, usergames
+                WHERE usergames."gameId" = ${currentGameId} AND users.id = usergames."userId"`);
+          });
+          const resolvedUsers = await Promise.all(pendingGameUsers);
+          resolvedUsers.forEach((gameUsers, index) => {
+            const [usernameObjects] = gameUsers;
+            const usernames = usernameObjects.map(object => object.username);
+            pendingGames[index].users = usernames;
           });
           socket.to('lobby').broadcast.emit('newGame', JSON.stringify(pendingGames));
         } catch (err) {
