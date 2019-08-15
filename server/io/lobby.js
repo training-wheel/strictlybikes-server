@@ -48,7 +48,7 @@ class LobbySocket {
           const {
             id: gameId, playerCount, playerLimit, lat, long, markerLimit, radius,
           } = game;
-          await usergames.create({ userId, gameId });
+          const usergame = await usergames.create({ userId, gameId });
           socket.leave('lobby');
           socket.join(room);
           socket.emit('join', `Congratulations you joined ${room}`);
@@ -73,6 +73,9 @@ class LobbySocket {
             setTimeout(() => {
               socket.emit('playing', { markersArray, players });
               socket.to(room).emit('playing', { markersArray, players });
+              socket.on('polyline', (polyline) => {
+                usergame.update({ polyline });
+              });
               setTimeout(() => {
                 if (game.state !== 'end') {
                   this.socket.emit('end');
