@@ -54,7 +54,7 @@ class LobbySocket {
           socket.emit('join', `Congratulations you joined ${room}`);
           if (playerCount >= playerLimit) {
             await game.update({ state: 'playing' });
-            const markerCoords = generateMarkers(lat, long, radius, markerLimit);
+            const markerCoords = await generateMarkers(lat, long, radius, markerLimit);
             const createMarkersArray = markerCoords.map((marker) => {
               const [markerLat, markerLong] = marker;
               return { lat: markerLat, long: markerLong, gameId };
@@ -63,9 +63,13 @@ class LobbySocket {
             const [playersArray] = await connection
               .query(`SELECT users.username FROM users, usergames WHERE usergames."gameId" = ${gameId} AND users.id = usergames."userId"`);
             const players = playersArray.reduce((counter, player) => {
-              counter[player] = 0;
+              const formattedPlayer = {
+                username: player.username,
+                score: 0,
+              };
+              counter.push(formattedPlayer);
               return counter;
-            }, {});
+            }, []);
             setTimeout(() => {
               socket.emit('playing', { markersArray, players });
               socket.to(room).emit('playing', markersArray);
