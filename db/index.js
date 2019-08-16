@@ -1,12 +1,11 @@
-/* eslint-disable no-console */
 const Sequelize = require('sequelize');
-const { Op } = Sequelize;
 const definitions = require('../db/models/index');
 const list = require('./badgeList');
 const userMet = require('./userMetrics');
 
 const { DB_NAME, DB_USER, DB_USER_PASSWORD } = process.env;
 
+const { Op } = Sequelize;
 const connection = new Sequelize(DB_NAME, DB_USER, DB_USER_PASSWORD, {
   host: process.env.DB_HOST,
   dialect: 'postgres',
@@ -92,7 +91,7 @@ games.updateMetrics = async (game) => {
             badgeId: gameBadge.id,
           });
         }
-        const winStreak = await usermetrics.findCreateFind({
+        const [winStreak] = await usermetrics.findCreateFind({
           where: {
             userId: player.userId,
             metricId: metricsId['Win Streak'],
