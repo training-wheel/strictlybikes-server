@@ -85,7 +85,7 @@ class LobbySocket {
               socket.emit('playing', { markersArray, players });
               socket.to(room).emit('playing', { markersArray, players });
               if (game.mode === 'timeattack') {
-                const interval = Math.floor(game.timeLimit / 3);
+                const interval = Math.floor((game.timeLimit / 3) * 1000);
                 let count = 1;
                 const intervalId = setInterval(() => {
                   count += 1;
@@ -112,7 +112,7 @@ class LobbySocket {
                       state: 'end',
                     });
                   }
-                }, game.timeLimit);
+                }, game.timeLimit * 1000);
               }
             }, 3000);
           }
