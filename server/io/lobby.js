@@ -91,6 +91,13 @@ class LobbySocket {
               };
               if (game.mode === 'teamsprint' && index % 2 === 1) {
                 formattedPlayer.team = 'orange';
+                usergames.update({ team: 'orange' }, {
+                  where: {
+                    userId,
+                    gameId,
+                  },
+                });
+                console.log('placeholder');
               }
               counter.push(formattedPlayer);
               return counter;
