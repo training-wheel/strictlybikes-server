@@ -10,6 +10,10 @@ const UsersGames = {
     type: Sequelize.TEXT,
     allowNull: true,
   },
+  team: {
+    type: Sequelize.ENUM('blue', 'orange'),
+    defaultValue: 'blue',
+  },
 };
 
 module.exports = UsersGames;
