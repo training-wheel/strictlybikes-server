@@ -7,7 +7,7 @@ const UsersGames = {
     defaultValue: 0,
   },
   polyline: {
-    type: Sequelize.STRING,
+    type: Sequelize.TEXT,
     allowNull: true,
   },
 };
