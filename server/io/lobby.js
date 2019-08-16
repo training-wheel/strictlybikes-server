@@ -83,11 +83,15 @@ class LobbySocket {
             const markersArray = await markers.bulkCreate(createMarkersArray, { returning: true });
             const [playersArray] = await connection
               .query(`SELECT users.username FROM users, usergames WHERE usergames."gameId" = ${gameId} AND users.id = usergames."userId"`);
-            const players = playersArray.reduce((counter, player) => {
+            const players = playersArray.reduce((counter, player, index) => {
               const formattedPlayer = {
                 username: player.username,
                 score: 0,
+                team: 'blue',
               };
+              if (game.mode === 'teamsprint' && index % 2 === 1) {
+                formattedPlayer.team = 'orange';
+              }
               counter.push(formattedPlayer);
               return counter;
             }, []);
