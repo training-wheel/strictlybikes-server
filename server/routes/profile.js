@@ -30,11 +30,12 @@ const getProfile = async (req, res) => {
       },
     });
     const gameIds = allGames.map((game) => {
-      return game.id;
+      return game.gameId;
     });
 
     const gameInfo = await games.findAll({
       where: {
+        state: 'end',
         [Op.or]: {
           id: gameIds,
         },
@@ -58,9 +59,8 @@ const getProfile = async (req, res) => {
       userBadges,
       userMetrics,
     };
-    
+    console.log(gameMarkers, gameInfo)
     res.send(200, profile);
-    console.log(Array.from(profile.gameInfo));
   } catch (err) {
     console.error(`Failed to get profile: ${err}`);
     res.send(500, 'Failed to get profile');
