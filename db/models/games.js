@@ -42,6 +42,10 @@ const Games = {
     allowNull: false,
     defaultValue: 'init',
   },
+  mode: {
+    type: Sequelize.ENUM('alleycat', 'timeattack', 'teamsprint'),
+    allowNull: false,
+  },
 };
 
 module.exports = Games;
