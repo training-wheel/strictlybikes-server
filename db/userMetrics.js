@@ -1,10 +1,4 @@
 module.exports = [
-  // {
-  //   name: 'Kilometers Traveled',
-  // },
-  // {
-  //   name: 'Top Speed',
-  // },
   {
     name: 'Wins',
   },
@@ -12,9 +6,9 @@ module.exports = [
     name: 'Games',
   },
   {
-    name: 'Losses',
+    name: 'Top Speed',
   },
-  // {
-  //   name: 'Time Playing',
-  // },
+  {
+    name: 'Win Streak',
+  },
 ];
