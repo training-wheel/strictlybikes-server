@@ -9,27 +9,6 @@ class LobbySocket {
     this.server = server;
     this.socket = socket;
     this.handlers = {
-      polyline: async (data) => {
-        try {
-          const { jwt: token, room, path: polyline } = data;
-          const { id: userId } = jwt.verify(token, process.env.JWT_SECRET);
-          const game = await games.findOne({
-            where: {
-              state: 'end',
-              code: room,
-            },
-          });
-          const { id: gameId } = game;
-          usergames.update({ polyline }, {
-            where: {
-              userId,
-              gameId,
-            },
-          });
-        } catch (err) {
-          console.error(`Failed to update polyline: ${err}`);
-        }
-      },
       joinLobby: async () => {
         try {
           socket.join('lobby');

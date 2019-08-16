@@ -1,12 +1,11 @@
-/* eslint-disable no-console */
 const Sequelize = require('sequelize');
-const { Op } = Sequelize;
 const definitions = require('../db/models/index');
 const list = require('./badgeList');
 const userMet = require('./userMetrics');
 
 const { DB_NAME, DB_USER, DB_USER_PASSWORD } = process.env;
 
+const { Op } = Sequelize;
 const connection = new Sequelize(DB_NAME, DB_USER, DB_USER_PASSWORD, {
   host: process.env.DB_HOST,
   dialect: 'postgres',
@@ -62,7 +61,7 @@ games.updateMetrics = async (game) => {
     const allMetrics = await metrics.findAll({
       where: {
         name: {
-          [Op.or]: ['Wins', 'Games'],
+          [Op.or]: ['Wins', 'Games', 'Top Speed', 'Win Streak'],
         },
       },
     });
@@ -92,6 +91,12 @@ games.updateMetrics = async (game) => {
             badgeId: gameBadge.id,
           });
         }
+        const [winStreak] = await usermetrics.findCreateFind({
+          where: {
+            userId: player.userId,
+            metricId: metricsId['Win Streak'],
+          },
+        });
         if (player.markerCount === game.markerLimit) {
           const wonGames = await usermetrics.findCreateFind({
             where: {
@@ -114,6 +119,23 @@ games.updateMetrics = async (game) => {
               },
             });
           }
+          await winStreak.increment();
+          const streakBadge = await badges.findOne({
+            where: {
+              metricId: metricsId['Win Streak'],
+              goal: winStreak.value,
+            },
+          });
+          if (streakBadge) {
+            userbadges.create({
+              where: {
+                userId: player.userId,
+                badgeId: wonBadge.id,
+              },
+            });
+          }
+        } else {
+          winStreak.update({ value: 0 });
         }
       } catch (err) {
         console.error(err);

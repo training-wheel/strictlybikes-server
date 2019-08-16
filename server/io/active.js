@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const {
-  games, usergames, usermarkers, markers, users,
+  games, usergames, usermarkers, markers, users, metrics, usermetrics,
 } = require('../../db/index').models;
 
 class ActiveSocket {
@@ -8,8 +8,44 @@ class ActiveSocket {
     this.server = server;
     this.socket = socket;
     this.handlers = {
+      gameStats: async (data) => {
+        try {
+          const {
+            jwt: token, room, path: polyline, topSpeed,
+          } = data;
+          const { id: userId } = jwt.verify(token, process.env.JWT_SECRET);
+          const game = await games.findOne({
+            where: {
+              state: 'end',
+              code: room,
+            },
+          });
+          const { id: gameId } = game;
+          usergames.update({ polyline }, {
+            where: {
+              userId,
+              gameId,
+            },
+          });
+          const { id: speedId } = await metrics.findOne({
+            where: {
+              name: 'Top Speed',
+            },
+          });
+          const currentTopSpeed = await usermetrics.findCreateFind({
+            where: {
+              metricId: speedId,
+              userId,
+            },
+          });
+          if (topSpeed > currentTopSpeed.value) {
+            currentTopSpeed.update({ value: topSpeed });
+          }
+        } catch (err) {
+          console.error(`Failed to update polyline: ${err}`);
+        }
+      },
       markerHit: async (data) => {
-        //  create new game
         try {
           const { id: markerId, jwt: token } = data;
           const { id: userId } = jwt.verify(token, process.env.JWT_SECRET);
