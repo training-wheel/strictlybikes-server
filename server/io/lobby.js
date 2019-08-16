@@ -9,6 +9,27 @@ class LobbySocket {
     this.server = server;
     this.socket = socket;
     this.handlers = {
+      polyline: async (data) => {
+        try {
+          const { jwt: token, room, path: polyline } = data;
+          const { id: userId } = jwt.verify(token, process.env.JWT_SECRET);
+          const game = await games.findOne({
+            where: {
+              state: 'end',
+              code: room,
+            },
+          });
+          const { id: gameId } = game;
+          usergames.update({ polyline }, {
+            where: {
+              userId,
+              gameId,
+            },
+          });
+        } catch (err) {
+          console.error(`Failed to update polyline: ${err}`);
+        }
+      },
       joinLobby: async () => {
         try {
           socket.join('lobby');
@@ -48,7 +69,7 @@ class LobbySocket {
           const {
             id: gameId, playerCount, playerLimit, lat, long, markerLimit, radius,
           } = game;
-          const usergame = await usergames.create({ userId, gameId });
+          await usergames.create({ userId, gameId });
           socket.leave('lobby');
           socket.join(room);
           socket.emit('join', `Congratulations you joined ${room}`);
@@ -73,9 +94,6 @@ class LobbySocket {
             setTimeout(() => {
               socket.emit('playing', { markersArray, players });
               socket.to(room).emit('playing', { markersArray, players });
-              socket.on('polyline', (polyline) => {
-                usergame.update({ polyline });
-              });
               setTimeout(() => {
                 if (game.state !== 'end') {
                   this.socket.emit('end');
