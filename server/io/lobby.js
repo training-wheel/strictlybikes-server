@@ -94,16 +94,36 @@ class LobbySocket {
             setTimeout(() => {
               socket.emit('playing', { markersArray, players });
               socket.to(room).emit('playing', { markersArray, players });
-              setTimeout(() => {
-                if (game.state !== 'end') {
-                  this.socket.emit('end');
-                  this.socket.to(room).emit('end');
-                  games.updateMetrics(game);
-                  game.update({
-                    state: 'end',
-                  });
-                }
-              }, game.timeLimit);
+              if (game.mode === 'timeattack') {
+                const interval = Math.floor(game.timeLimit / 3);
+                let count = 1;
+                const intervalId = setInterval(() => {
+                  count += 1;
+                  if (count > 3) {
+                    clearInterval(intervalId);
+                    this.socket.emit('end');
+                    this.socket.to(room).emit('end');
+                    games.updateMetrics(game);
+                    game.update({
+                      state: 'end',
+                    });
+                  } else {
+                    this.socket.emit('update markers', count);
+                    this.socket.to(room).emit('update markers', count);
+                  }
+                }, interval);
+              } else {
+                setTimeout(() => {
+                  if (game.state !== 'end') {
+                    this.socket.emit('end');
+                    this.socket.to(room).emit('end');
+                    games.updateMetrics(game);
+                    game.update({
+                      state: 'end',
+                    });
+                  }
+                }, game.timeLimit);
+              }
             }, 3000);
           }
           const pendingGames = await games.findAll({
