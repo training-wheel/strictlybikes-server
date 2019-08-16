@@ -8,7 +8,7 @@ const UsersGames = {
   },
   polyline: {
     type: Sequelize.STRING,
-    defaultValue: '',
+    allowNull: true,
   },
 };
 
