@@ -62,7 +62,7 @@ games.updateMetrics = async (game) => {
     const allMetrics = await metrics.findAll({
       where: {
         name: {
-          [Op.or]: ['Wins', 'Games'],
+          [Op.or]: ['Wins', 'Games', 'Top Speed', 'Win Streak'],
         },
       },
     });
@@ -92,6 +92,12 @@ games.updateMetrics = async (game) => {
             badgeId: gameBadge.id,
           });
         }
+        const winStreak = await usermetrics.findCreateFind({
+          where: {
+            userId: player.userId,
+            metricId: metricsId['Win Streak'],
+          },
+        });
         if (player.markerCount === game.markerLimit) {
           const wonGames = await usermetrics.findCreateFind({
             where: {
@@ -114,6 +120,23 @@ games.updateMetrics = async (game) => {
               },
             });
           }
+          await winStreak.increment();
+          const streakBadge = await badges.findOne({
+            where: {
+              metricId: metricsId['Win Streak'],
+              goal: winStreak.value,
+            },
+          });
+          if (streakBadge) {
+            userbadges.create({
+              where: {
+                userId: player.userId,
+                badgeId: wonBadge.id,
+              },
+            });
+          }
+        } else {
+          winStreak.update({ value: 0 });
         }
       } catch (err) {
         console.error(err);
