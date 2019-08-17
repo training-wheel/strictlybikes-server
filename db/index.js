@@ -26,13 +26,11 @@ names.forEach((name) => {
   models[name] = connection.define(name, definitions[name]);
   connection.sync();
 });
-// for (const name in definitions) {
-//   models[name] = connection.define(name, definitions[name]);
-//   connection.sync();
-// }
+
 const {
   users, games, markers, usermarkers, usergames, badges, userbadges, metrics, usermetrics,
 } = models;
+
 users.hasMany(usergames);
 games.hasMany(usergames);
 games.belongsTo(users);
