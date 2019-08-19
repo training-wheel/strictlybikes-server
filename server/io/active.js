@@ -29,7 +29,7 @@ class ActiveSocket {
           });
           const { id: speedId } = await metrics.findOne({
             where: {
-              name: 'Top Speed',
+              name: 'topSpeed',
             },
           });
           const currentTopSpeed = await usermetrics.findCreateFind({
