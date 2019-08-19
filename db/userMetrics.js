@@ -1,14 +1,14 @@
 module.exports = [
   {
-    name: 'Wins',
+    name: 'wins',
   },
   {
-    name: 'Games',
+    name: 'gamesPlayed',
   },
   {
-    name: 'Top Speed',
+    name: 'topSpeed',
   },
   {
-    name: 'Win Streak',
+    name: 'winStreak',
   },
 ];
