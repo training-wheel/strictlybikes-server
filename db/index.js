@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const definitions = require('../db/models/index');
-const list = require('./badgeList');
+const badgeList = require('./badgeList');
 const userMet = require('./userMetrics');
 
 const { DB_NAME, DB_USER, DB_USER_PASSWORD } = process.env;
@@ -46,13 +46,19 @@ badges.hasMany(userbadges);
 
 // Only need to run once to populate database with badges.
 
-userMet.forEach((metric) => {
-  metrics.findCreateFind({ where: metric });
+userMet.forEach(async (metric) => {
+  try {
+    const [currentMetric] = await metrics.findCreateFind({ where: metric });
+    const { id: metricId, name } = currentMetric;
+    const badgeArray = badgeList[name];
+    badgeArray.forEach((badge) => {
+      badge.metricId = metricId;
+      badges.findCreateFind({ where: badge });
+    });
+  } catch (err) {
+    console.error(`Failed to create metric and badge row ${err}`);
+  }
 });
-list.forEach((badge) => {
-  badges.findCreateFind({ where: badge });
-});
-
 
 games.updateMetrics = async (game) => {
   try {
