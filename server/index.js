@@ -11,6 +11,7 @@ const loginRoute = require('./routes/login');
 const signupRoute = require('./routes/signup');
 const createGame = require('./routes/createGame');
 const getProfile = require('./routes/profile');
+const profileImage = require('./routes/home');
 const validateUser = require('./middleware/validateUser');
 
 server.use(restify.plugins.acceptParser(server.acceptable));
@@ -21,8 +22,10 @@ loginRoute.applyRoutes(server);
 signupRoute.applyRoutes(server);
 createGame.use(validateUser);
 getProfile.use(validateUser);
+profileImage.use(validateUser);
 createGame.applyRoutes(server);
 getProfile.applyRoutes(server);
+profileImage.applyRoutes(server);
 
 server.get('/', validateUser, (req, res) => {
   res.send('~Strictly Bikes~');
@@ -38,12 +41,6 @@ io.sockets.on('connect', (socket) => {
     lobby: new LobbySocket(socket, server.server),
     active: new ActiveSocket(socket, server.server),
   };
-  // const categories = Object.keys(eventHandlers);
-  // const handlers = categories.map(category => eventHandlers[category].handlers);
-  // const events = Object.keys(handlers);
-  // events.forEach((event) => {
-  //   socket.on(event, handlers[event]);
-  // });
   for (let category in eventHandlers) {
     const { handlers } = eventHandlers[category];
     for (let event in handlers) {
