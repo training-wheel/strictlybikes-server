@@ -18,7 +18,7 @@ const Users = {
     allowNull: false,
   },
   gamesCreated: {
-    type: Sequelize.NUMBER,
+    type: Sequelize.INTEGER,
     allowNull: true,
     defaultValue: 0,
   },
