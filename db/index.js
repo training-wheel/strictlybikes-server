@@ -62,13 +62,7 @@ userMet.forEach(async (metric) => {
 
 games.updateMetrics = async (game) => {
   try {
-    const allMetrics = await metrics.findAll({
-      where: {
-        name: {
-          [Op.or]: ['wins', 'games', 'topSpeed', 'winStreak'],
-        },
-      },
-    });
+    const allMetrics = await metrics.findAll();
     const metricsId = allMetrics.reduce((acc, metric) => {
       acc[metric.name] = metric.id;
       return acc;
@@ -79,13 +73,13 @@ games.updateMetrics = async (game) => {
         const [playedGames] = await usermetrics.findCreateFind({
           where: {
             userId: player.userId,
-            metricId: metricsId.Games,
+            metricId: metricsId.gamesPlayed,
           },
         });
         await playedGames.increment('value');
         const gameBadge = await badges.findOne({
           where: {
-            metricId: metricsId.Games,
+            metricId: metricsId.gamesPlayed,
             goal: playedGames.value,
           },
         });
