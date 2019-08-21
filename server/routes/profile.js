@@ -3,7 +3,7 @@ const { models, Sequelize, connection } = require('../../db/index');
 
 const { Op } = Sequelize;
 const {
-  users, userbadges, badges, usermetrics, metrics, usergames, games, markers,
+  users, badges, usergames, games, markers,
 } = models;
 
 const router = new Router();
@@ -17,7 +17,9 @@ const getProfile = async (req, res) => {
     const userBadgeIds = userBadgeIdObjects.map(userbadge => userbadge.badgeId);
     const userBadges = await badges.findAll({
       where: {
-        [Op.or]: userBadgeIds,
+        id: {
+          [Op.or]: userBadgeIds,
+        },
       },
     });
     const [userMetrics] = await connection.query(`SELECT usermetrics.value, metrics.name FROM usermetrics, metrics
@@ -50,6 +52,7 @@ const getProfile = async (req, res) => {
         return players;
       } catch (err) {
         console.error('Failed to retrieve players');
+        return err;
       }
     });
     const players = await Promise.all(playersPromise);
