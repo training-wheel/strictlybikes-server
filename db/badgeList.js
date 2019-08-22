@@ -2,42 +2,42 @@ module.exports = {
   wins: [
     {
       name: '1WinBadge',
-      description: 'Win 1 games of Scatter!',
+      description: 'First Win!',
       goal: 1,
     },
     {
       name: '5WinBadge',
-      description: 'Win 5 games of Scatter!',
+      description: '5 Wins!',
       goal: 5,
     },
     {
       name: '10WinBadge',
-      description: 'Win 10 games of Scatter!',
+      description: '10 Wins!',
       goal: 10,
     },
     {
       name: '15WinBadge',
-      description: 'Win 15 games of Scatter!',
+      description: '15 Wins!',
       goal: 15,
     },
   ],
   gamesPlayed: [
     {
       name: '1GamePlayed',
-      description: 'Play 1 game of Scatter!',
+      description: 'First game!',
       goal: 1,
     }, {
       name: '5GamePlayed',
-      description: 'Play 5 games of Scatter!',
+      description: '5 played!',
       goal: 5,
     },
     {
       name: '10GamePlayed',
-      description: 'Play 10 games of Scatter!',
+      description: '10 played!',
       goal: 10,
     }, {
       name: '15GamePlayed',
-      description: 'Play 15 games of Scatter!',
+      description: '15 played!',
       goal: 15,
     },
   ],
@@ -60,16 +60,16 @@ module.exports = {
   winStreak: [
     {
       name: '5WinStreak',
-      description: 'Win 5 games in a row',
+      description: '5 wins streak!',
       goal: 5,
     },
     {
       name: '10WinStreak',
-      description: 'Win 10 games in a row',
+      description: '10 wins streak!',
       goal: 10,
     }, {
       name: '15WinStreak',
-      description: 'Win 15 games in a row',
+      description: '15 wins streak!',
       goal: 15,
     },
   ],
