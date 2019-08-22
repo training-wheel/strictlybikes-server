@@ -21,6 +21,9 @@ const getProfile = async (req, res) => {
           [Op.or]: userBadgeIds,
         },
       },
+      order: [
+        ['goal', 'DESC'],
+      ],
     });
     const [userMetrics] = await connection.query(`SELECT usermetrics.value, metrics.name FROM usermetrics, metrics
       WHERE usermetrics."userId" = ${userId} AND metrics.id = usermetrics."metricId"`);
