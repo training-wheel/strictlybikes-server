@@ -5,7 +5,6 @@ const userMet = require('./userMetrics');
 
 const { DB_NAME, DB_USER, DB_USER_PASSWORD } = process.env;
 
-const { Op } = Sequelize;
 const connection = new Sequelize(DB_NAME, DB_USER, DB_USER_PASSWORD, {
   host: process.env.DB_HOST,
   dialect: 'postgres',
@@ -52,8 +51,9 @@ userMet.forEach(async (metric) => {
     const { id: metricId, name } = currentMetric;
     const badgeArray = badgeList[name];
     badgeArray.forEach((badge) => {
-      badge.metricId = metricId;
-      badges.findCreateFind({ where: badge });
+      const badgeOptions = badge;
+      badgeOptions.metricId = metricId;
+      badges.findCreateFind({ where: badgeOptions });
     });
   } catch (err) {
     console.error(`Failed to create metric and badge row ${err}`);
