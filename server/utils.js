@@ -73,6 +73,16 @@ const checkDistance = (coords1, coords2, radius) => {
   return distance <= radius;
 };
 
+/**
+ * Gives array of random points within a radius from a central point
+ *
+ * @param { Number} lat    Latitudinal central coordinate
+ * @param  {Number} long   Longitudinal central coordinate
+ * @param  {Number} radius Distance from central point
+ * @param  {Number} count  Number of desired points
+ * @return {Array}         Array of points desired
+ */
+
 const generateMarkers = async (lat, long, radius, count) => {
   try {
     const points = [];
