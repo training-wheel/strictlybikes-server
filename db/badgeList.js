@@ -73,4 +73,25 @@ module.exports = {
       goal: 15,
     },
   ],
+  gamesCreated: [
+    {
+      name: '1GameCreated',
+      description: 'First game created!',
+      goal: 1,
+    },
+    {
+      name: '5GamesCreated',
+      description: '5 games created!',
+      goal: 5,
+    },
+    {
+      name: '10GamesCreated',
+      description: '10 games created!',
+      goal: 10,
+    }, {
+      name: '15GamesCreated',
+      description: '15 games created!',
+      goal: 15,
+    },
+  ],
 };
