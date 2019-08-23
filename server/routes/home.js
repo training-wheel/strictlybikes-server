@@ -6,8 +6,8 @@ const router = new Router();
 const profileImage = async (req, res) => {
   try {
     const userId = req.user;
-    const { imageUrl } = await users.findByPk(userId);
-    res.send(200, imageUrl);
+    const { imageUrl, username } = await users.findByPk(userId);
+    res.send(200, { imageUrl, username });
   } catch (err) {
     console.error(`Failed to fetch profile image: ${err}`);
     res.send(500, 'Failed to fetch profile image');
