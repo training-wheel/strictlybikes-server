@@ -17,11 +17,6 @@ const Users = {
     type: Sequelize.STRING,
     allowNull: false,
   },
-  gamesCreated: {
-    type: Sequelize.INTEGER,
-    allowNull: true,
-    defaultValue: 0,
-  },
 };
 
 module.exports = Users;
