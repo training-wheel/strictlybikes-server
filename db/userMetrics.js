@@ -11,4 +11,7 @@ module.exports = [
   {
     name: 'winStreak',
   },
+  {
+    name: 'gamesCreated',
+  },
 ];
