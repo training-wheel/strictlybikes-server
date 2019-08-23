@@ -1,5 +1,14 @@
 const axios = require('axios');
 
+/**
+   * Gives a random point in an a given location and
+   * a radius and said point is on a road using Google Roads API
+   *
+   * @param {Number} lat Latitudinal coordinate
+   * @param {Number} long Longitudinal coordinate
+   * @param {Number} radius Radial distance(km) from central coordinate
+   */
+
 const findRandomPoint = (lat, long, radius) => {
   const angle = (Math.random() * 2 * Math.PI);
   const distance = Math.sqrt(Math.random() * radius * radius);
@@ -33,6 +42,16 @@ const findRandomPoint = (lat, long, radius) => {
     });
 };
 
+/**
+ * Checks if a location is within a certain radius of coordinates
+ * Returns true if true.
+ *
+ * @param {Array} coords1 Array of latitude, longitude coordinates
+ * @param {Array} coords2 Array of latitude, longitude coordinates
+ * @param {Number} radius Estimated radial distance between points
+ * @returns {Boolean} True if the distance is less than or equal to the radius
+ */
+
 const checkDistance = (coords1, coords2, radius) => {
   const toRadians = x => x * Math.PI / 180;
 
@@ -53,6 +72,16 @@ const checkDistance = (coords1, coords2, radius) => {
   const distance = R * c;
   return distance <= radius;
 };
+
+/**
+ * Gives array of random points within a radius from a central point
+ *
+ * @param { Number} lat    Latitudinal central coordinate
+ * @param  {Number} long   Longitudinal central coordinate
+ * @param  {Number} radius Distance from central point
+ * @param  {Number} count  Number of desired points
+ * @return {Array}         Array of points desired
+ */
 
 const generateMarkers = async (lat, long, radius, count) => {
   try {
