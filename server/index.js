@@ -1,3 +1,9 @@
+/**
+ * dotenv required for accessing secrets
+ * restify required for managing the server
+ * socketio required to implement sockets
+ */
+
 require('dotenv').config();
 const restify = require('restify');
 const socketio = require('socket.io');
