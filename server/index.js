@@ -32,11 +32,24 @@ const createGame = require('./routes/createGame');
 const getProfile = require('./routes/profile');
 const homeData = require('./routes/home');
 
+/**
+ * validateUser is middleware to ensure a user is logged in
+ */
+
 const validateUser = require('./middleware/validateUser');
+
+/**
+ * Apply basic parsing middleware to the server
+ */
 
 server.use(restify.plugins.acceptParser(server.acceptable));
 server.use(restify.plugins.queryParser());
 server.use(restify.plugins.bodyParser());
+
+/**
+ * Apply all of the routes to the main server
+ * Note that loginRoute and signupRoute do not need validateUser
+ */
 
 loginRoute.applyRoutes(server);
 signupRoute.applyRoutes(server);
@@ -46,10 +59,6 @@ homeData.use(validateUser);
 createGame.applyRoutes(server);
 getProfile.applyRoutes(server);
 homeData.applyRoutes(server);
-
-server.get('/', validateUser, (req, res) => {
-  res.send('~Strictly Bikes~');
-});
 
 const io = socketio.listen(server.server);
 const { LobbySocket } = require('./io/lobby');
