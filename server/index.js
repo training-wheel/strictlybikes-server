@@ -60,6 +60,12 @@ createGame.applyRoutes(server);
 getProfile.applyRoutes(server);
 homeData.applyRoutes(server);
 
+/**
+ * Create the socket and require event routes
+ * LobbySocket is required to host the pre-game events
+ * ActiveSocket is required to host the in-game events
+ */
+
 const io = socketio.listen(server.server);
 const { LobbySocket } = require('./io/lobby');
 const { ActiveSocket } = require('./io/active');
