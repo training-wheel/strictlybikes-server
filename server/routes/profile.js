@@ -1,5 +1,22 @@
+/**
+ * The getProfile route is defined here. The data is used to populate the
+ * profile page. The route is exported to the server/index file.
+ */
+
+/**
+ * Router is a constructor function required to create a new route
+ * models is required to manipulate database tables
+ * Sequelize is required to abstract the Op operator
+ * connection is required to create raw queries
+ */
+
 const { Router } = require('restify-router');
 const { models, Sequelize, connection } = require('../../db/index');
+
+/**
+ * Op is required to use conditional operations in queries
+ * users, badges, usergames, games and markers are tables to be queried
+ */
 
 const { Op } = Sequelize;
 const {
