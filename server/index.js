@@ -8,16 +8,30 @@ require('dotenv').config();
 const restify = require('restify');
 const socketio = require('socket.io');
 
+/**
+ * server is a basic server, passed a name and a version
+ */
+
 const server = restify.createServer({
   name: 'Strictly Bikes',
   version: '1.0.0',
 });
 
+/**
+ * Require all of the server endpoints
+ * loginRoute is the login endpoint
+ * signupRoute is to sign up new users
+ * createGame is the initial endpoint to create a new race
+ * getProfile fetches all user information for the profile page
+ * homeData fetches basic user information for game functionality
+ */
+
 const loginRoute = require('./routes/login');
 const signupRoute = require('./routes/signup');
 const createGame = require('./routes/createGame');
 const getProfile = require('./routes/profile');
-const profileImage = require('./routes/home');
+const homeData = require('./routes/home');
+
 const validateUser = require('./middleware/validateUser');
 
 server.use(restify.plugins.acceptParser(server.acceptable));
@@ -28,10 +42,10 @@ loginRoute.applyRoutes(server);
 signupRoute.applyRoutes(server);
 createGame.use(validateUser);
 getProfile.use(validateUser);
-profileImage.use(validateUser);
+homeData.use(validateUser);
 createGame.applyRoutes(server);
 getProfile.applyRoutes(server);
-profileImage.applyRoutes(server);
+homeData.applyRoutes(server);
 
 server.get('/', validateUser, (req, res) => {
   res.send('~Strictly Bikes~');
