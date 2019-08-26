@@ -70,6 +70,11 @@ const io = socketio.listen(server.server);
 const { LobbySocket } = require('./io/lobby');
 const { ActiveSocket } = require('./io/active');
 
+/**
+ * Start listening for socket connections
+ * In addition, it dynamically applies all event routes to the socket
+ */
+
 io.sockets.on('connect', (socket) => {
   console.log('connected');
   const eventHandlers = {
