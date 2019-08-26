@@ -1,7 +1,33 @@
+/**
+ * createGame is the server route for the POST request that actually
+ * inserts a new game into the database. It is exported to the
+ * server/index.js file.
+ */
+
+/**
+ * Router is a constructor required to route the endpoint to the main server
+ * Database models are required for database queries
+ */
+
 const { Router } = require('restify-router');
-const { games, users, badges, userbadges, metrics, usermetrics } = require('../../db/index').models;
+const {
+  games, badges, userbadges, metrics, usermetrics,
+} = require('../../db/index').models;
+
+/**
+ * router is a new instance of the Router constuctor
+ */
 
 const router = new Router();
+
+/**
+ * createGame is a callback function designed to insert a new game into the
+ * database and update any necessary stats.
+ *
+ * @param {Object} req: The HTTP request object. We grab the userId and game
+ * options for game creation.
+ * @param {Object} res: The HTTP response object. Here we send back the userId.
+ */
 
 const createGame = async (req, res) => {
   try {
@@ -37,6 +63,10 @@ const createGame = async (req, res) => {
     res.send(500, 'Failed to create game');
   }
 };
+
+/**
+ * Apply the createGame route and export it to the server.index file
+ */
 
 router.post('/createGame', createGame);
 
