@@ -14,9 +14,13 @@ const axios = require('axios');
 const jwt = require('jsonwebtoken');
 const { users } = require('../../db/index').models;
 
+/**
+ * Instantiate a new server route
+ */
+
 const router = new Router();
 
-router.post('/signup', async (req, res) => {
+const postSignup = async (req, res) => {
   try {
     const { accessToken, username } = req.body;
     const profile = await axios.get('https://www.googleapis.com/oauth2/v2/userinfo', {
@@ -35,6 +39,8 @@ router.post('/signup', async (req, res) => {
     console.error(`Signup failed: ${err}`);
     res.send(500, 'Signup failed');
   }
-});
+};
+
+router.post('/signup', postSignup);
 
 module.exports = router;
