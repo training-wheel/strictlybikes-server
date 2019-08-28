@@ -1,3 +1,14 @@
+/**
+ * The POST to /signup is defined here and exported to the server/index file.
+ */
+
+/**
+ * Router is a constructor function that allows routes
+ * axios is required to fetch user data from google
+ * jwt is required to sign a new JSON web token
+ * users is required to insert a new user in the database
+ */
+
 const { Router } = require('restify-router');
 const axios = require('axios');
 const jwt = require('jsonwebtoken');
