@@ -23,7 +23,21 @@ const {
   users, badges, usergames, games, markers,
 } = models;
 
+/**
+ * Create a new router instance
+ */
+
 const router = new Router();
+
+/**
+ * getProfile is a callback function that retrieves and orders user and game
+ * data for the profile page.
+ *
+ * @param {Object} req: The HTTP request object. The userId is abstracted out.
+ * @param {Object} res: The HTTP response object. The user's games, associated
+ * markers and users, the user's metrics and badges and the user's basic profile
+ * information are attached to the body.
+ */
 
 const getProfile = async (req, res) => {
   try {
@@ -100,6 +114,10 @@ const getProfile = async (req, res) => {
     res.send(500, 'Failed to get profile');
   }
 };
+
+/**
+ * The getProfile callback is applied to the GET /profile route and exported
+ */
 
 router.get('/profile', getProfile);
 
