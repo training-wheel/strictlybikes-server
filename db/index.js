@@ -1,3 +1,16 @@
+/**
+ * File to initialize the database access. It populates the database as needed
+ * and adds relevent methods.
+ */
+
+/**
+ * sequelize required to initialize the database
+ * definitions required to create tables
+ * badgeList required to populate the database with relevant badges
+ * userMetrics required to populate the database with metrics
+ * secret environemental variables abstracted from process.env
+ */
+
 const Sequelize = require('sequelize');
 const definitions = require('../db/models/index');
 const badgeList = require('./badgeList');
