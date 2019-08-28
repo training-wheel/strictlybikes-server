@@ -1,39 +1,79 @@
+/**
+ * dotenv required for accessing secrets
+ * restify required for managing the server
+ * socketio required to implement sockets
+ */
+
 require('dotenv').config();
 const restify = require('restify');
 const socketio = require('socket.io');
+
+/**
+ * server is a basic server, passed a name and a version
+ */
 
 const server = restify.createServer({
   name: 'Strictly Bikes',
   version: '1.0.0',
 });
 
+/**
+ * Require all of the server endpoints
+ * loginRoute is the login endpoint
+ * signupRoute is to sign up new users
+ * createGame is the initial endpoint to create a new race
+ * getProfile fetches all user information for the profile page
+ * homeData fetches basic user information for game functionality
+ */
+
 const loginRoute = require('./routes/login');
 const signupRoute = require('./routes/signup');
 const createGame = require('./routes/createGame');
 const getProfile = require('./routes/profile');
-const profileImage = require('./routes/home');
+const homeData = require('./routes/home');
+
+/**
+ * validateUser is middleware to ensure a user is logged in
+ */
+
 const validateUser = require('./middleware/validateUser');
+
+/**
+ * Apply basic parsing middleware to the server
+ */
 
 server.use(restify.plugins.acceptParser(server.acceptable));
 server.use(restify.plugins.queryParser());
 server.use(restify.plugins.bodyParser());
 
+/**
+ * Apply all of the routes to the main server
+ * Note that loginRoute and signupRoute do not need validateUser
+ */
+
 loginRoute.applyRoutes(server);
 signupRoute.applyRoutes(server);
 createGame.use(validateUser);
 getProfile.use(validateUser);
-profileImage.use(validateUser);
+homeData.use(validateUser);
 createGame.applyRoutes(server);
 getProfile.applyRoutes(server);
-profileImage.applyRoutes(server);
+homeData.applyRoutes(server);
 
-server.get('/', validateUser, (req, res) => {
-  res.send('~Strictly Bikes~');
-});
+/**
+ * Create the socket and require event routes
+ * LobbySocket is required to host the pre-game events
+ * ActiveSocket is required to host the in-game events
+ */
 
 const io = socketio.listen(server.server);
 const { LobbySocket } = require('./io/lobby');
 const { ActiveSocket } = require('./io/active');
+
+/**
+ * Start listening for socket connections
+ * In addition, it dynamically applies all event routes to the socket
+ */
 
 io.sockets.on('connect', (socket) => {
   console.log('connected');
@@ -55,6 +95,10 @@ io.sockets.on('connect', (socket) => {
     socket.removeAllListeners();
   });
 });
+
+/**
+ * Begin listening on the desired port
+ */
 
 const port = process.env.PORT || 3000;
 server.listen(port, () => {
