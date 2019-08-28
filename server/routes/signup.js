@@ -20,6 +20,15 @@ const { users } = require('../../db/index').models;
 
 const router = new Router();
 
+/**
+ * postSignup is a callback function that adds a new user to the database
+ * and responds to the client with a JSON web token.
+ * @param {Object} req: The HTTP request object. The users google access token
+ * and username are attached to the body property.
+ * @param {Object} res: The HTTP response object. The new JSON web token is
+ * attached.
+ */
+
 const postSignup = async (req, res) => {
   try {
     const { accessToken, username } = req.body;
@@ -40,6 +49,10 @@ const postSignup = async (req, res) => {
     res.send(500, 'Signup failed');
   }
 };
+
+/**
+ * The route to POST /signup is applied and exported to server/index
+ */
 
 router.post('/signup', postSignup);
 
