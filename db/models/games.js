@@ -1,4 +1,16 @@
+/**
+ * Define the games table
+ */
+
+/**
+ * sequelize required to provide datatypes
+ */
+
 const Sequelize = require('sequelize');
+
+/**
+ * Games is a list of columns in the games table
+ */
 
 const Games = {
   lat: {
@@ -47,5 +59,9 @@ const Games = {
     allowNull: false,
   },
 };
+
+/**
+ * Games is exported to ./index
+ */
 
 module.exports = Games;
