@@ -1,3 +1,13 @@
+/**
+ * Event handlers for game creation and initiation
+ */
+
+/**
+ * jsonwebtoken required for user validation
+ * models and connection required to query the database
+ * generateMarkers required to create random checkpoints
+ */
+
 const jwt = require('jsonwebtoken');
 const { models, connection } = require('../../db/index');
 const { generateMarkers } = require('../utils');
