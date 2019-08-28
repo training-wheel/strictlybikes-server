@@ -1,3 +1,16 @@
+/**
+ * File to initialize the database access. It populates the database as needed
+ * and adds relevent methods.
+ */
+
+/**
+ * sequelize required to initialize the database
+ * definitions required to create tables
+ * badgeList required to populate the database with relevant badges
+ * userMetrics required to populate the database with metrics
+ * secret environemental variables abstracted from process.env
+ */
+
 const Sequelize = require('sequelize');
 const definitions = require('../db/models/index');
 const badgeList = require('./badgeList');
@@ -5,14 +18,22 @@ const userMet = require('./userMetrics');
 
 const { DB_NAME, DB_USER, DB_USER_PASSWORD } = process.env;
 
+/**
+ * Establish database connection. postgres is specified and logging is turned
+ * off due to clutter.
+ */
+
 const connection = new Sequelize(DB_NAME, DB_USER, DB_USER_PASSWORD, {
   host: process.env.DB_HOST,
   dialect: 'postgres',
   logging: false,
 });
 
-connection
-  .authenticate()
+/**
+ * Connection is checked and then model relationships are specified
+ */
+
+connection.authenticate()
   .then(() => {
     console.log('Connection has been established successfully.');
   })
@@ -43,7 +64,9 @@ badges.belongsTo(metrics);
 users.hasMany(userbadges);
 badges.hasMany(userbadges);
 
-// Only need to run once to populate database with badges.
+/**
+ * Populate the database with relevant metrics and badges
+ */
 
 userMet.forEach(async (metric) => {
   try {
@@ -59,6 +82,11 @@ userMet.forEach(async (metric) => {
     console.error(`Failed to create metric and badge row ${err}`);
   }
 });
+
+/**
+ * updateMetrics is a custom function for updating the database upon game
+ * conclusion.
+ */
 
 games.updateMetrics = async (game) => {
   try {
@@ -144,6 +172,9 @@ games.updateMetrics = async (game) => {
   }
 };
 
+/**
+ * Export the connection, models and sequelize for advanced queries
+ */
 
 module.exports.connection = connection;
 module.exports.models = models;

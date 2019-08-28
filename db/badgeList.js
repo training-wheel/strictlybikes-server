@@ -1,3 +1,7 @@
+/**
+ * Define and export available badges
+ */
+
 module.exports = {
   wins: [
     {

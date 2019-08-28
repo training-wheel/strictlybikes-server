@@ -1,3 +1,7 @@
+/**
+ * Require and export all table definitions
+ */
+
 const Badges = require('./badges');
 const Games = require('./games');
 const Markers = require('./markers');

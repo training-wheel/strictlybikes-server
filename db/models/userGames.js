@@ -1,4 +1,16 @@
+/**
+ * Define the usergames table
+ */
+
+/**
+ * Sequelize required to provide datatypes
+ */
+
 const Sequelize = require('sequelize');
+
+/**
+ * UsersGames is a list of columns in usersgames
+ */
 
 const UsersGames = {
   markerCount: {
@@ -15,5 +27,9 @@ const UsersGames = {
     defaultValue: 'blue',
   },
 };
+
+/**
+ * UsersGames is exported to ./index
+ */
 
 module.exports = UsersGames;

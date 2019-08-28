@@ -1,3 +1,7 @@
+/**
+ * Define and export tracked metrics
+ */
+
 module.exports = [
   {
     name: 'wins',

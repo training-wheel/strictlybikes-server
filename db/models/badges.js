@@ -1,4 +1,16 @@
+/**
+ * Definition for badge table
+ */
+
+/**
+ * sequelize required to define datatypes
+ */
+
 const Sequelize = require('sequelize');
+
+/**
+ * Badges is a list of Badges columns
+ */
 
 const Badges = {
   name: {
@@ -14,5 +26,9 @@ const Badges = {
     allowNull: false,
   },
 };
+
+/**
+ * Badges is exported to ./index
+ */
 
 module.exports = Badges;

@@ -1,4 +1,16 @@
+/**
+ * Define the markers table
+ */
+
+/**
+ * sequelize required to provide datatypes
+ */
+
 const Sequelize = require('sequelize');
+
+/**
+ * Markers is a list of columns in the markers table
+ */
 
 const Markers = {
   lat: {
@@ -10,5 +22,9 @@ const Markers = {
     allowNull: false,
   },
 };
+
+/**
+ * Markers is exported to ./index
+ */
 
 module.exports = Markers;
