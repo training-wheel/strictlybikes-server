@@ -1,4 +1,16 @@
+/**
+ * Define the users table
+ */
+
+/**
+ * sequelize is required to provide datatypes
+ */
+
 const Sequelize = require('sequelize');
+
+/**
+ * Users is a list of all columns in the users table
+ */
 
 const Users = {
   googleId: {
@@ -18,5 +30,9 @@ const Users = {
     allowNull: false,
   },
 };
+
+/**
+ * Users is exported to ./index
+ */
 
 module.exports = Users;
