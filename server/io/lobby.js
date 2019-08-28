@@ -1,14 +1,33 @@
+/**
+ * Event handlers for game creation and initiation
+ */
+
+/**
+ * jsonwebtoken required for user validation
+ * models and connection required to query the database
+ * generateMarkers required to create random checkpoints
+ */
+
 const jwt = require('jsonwebtoken');
 const { models, connection } = require('../../db/index');
 const { generateMarkers } = require('../utils');
 
 const { usergames, games, markers } = models;
 
+/**
+ * LobbySocket is a constructor function that returns event handlers set to
+ * a specific socket and server.
+ */
+
 class LobbySocket {
   constructor(socket, server) {
     this.server = server;
     this.socket = socket;
     this.handlers = {
+      /**
+       * joinLobby is an event handler for attaching users to the lobby room.
+       * It finds all relevant pending games and sends them to the user.
+       */
       joinLobby: async () => {
         try {
           socket.join('lobby');
@@ -34,6 +53,11 @@ class LobbySocket {
           console.error(`Failed to join lobby: ${err}`);
         }
       },
+      /**
+       * joinGame is an event handler that moves a user to the game room.
+       * It takes care of database management and checks to see if the game has
+       * enough users to begin the game.
+       */
       joinGame: async (data) => {
         try {
           const { room, jwt: token } = data;
@@ -141,5 +165,9 @@ class LobbySocket {
     };
   }
 }
+
+/**
+ * Export the LobbySocket constructor function to server/index
+ */
 
 exports.LobbySocket = LobbySocket;
